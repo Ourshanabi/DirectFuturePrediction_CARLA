@@ -5,7 +5,7 @@ from __future__ import print_function
 import sys
 import os
 
-vizdoom_path = 'C://Users//Rzhang//Anaconda3//envs//recognition//Lib//site-packages//vizdoom'
+vizdoom_path = '../../../../toolboxes/ViZDoom_2017_03_31'
 sys.path = [os.path.join(vizdoom_path,'bin/python3')] + sys.path
 
 import vizdoom 
@@ -28,8 +28,8 @@ class DoomSimulator:
         self.game_args = args['game_args']
         
         self._game = vizdoom.DoomGame()
-        self._game.set_vizdoom_path(os.path.join(vizdoom_path,'vizdoom'))
-        self._game.set_doom_game_path(os.path.join(vizdoom_path,'freedoom2.wad'))
+        self._game.set_vizdoom_path(os.path.join(vizdoom_path,'bin/vizdoom'))
+        self._game.set_doom_game_path(os.path.join(vizdoom_path,'bin/freedoom2.wad'))
         self._game.load_config(self.config)
         self._game.add_game_args(self.game_args)
         self.curr_map = 0
@@ -119,12 +119,19 @@ class DoomSimulator:
                 
             if self.resize:
                 if self.num_channels == 1:
-                    if raw_img is None or (isinstance(raw_img, list) and raw_img[0] is None):
+                    if raw_img is None:
                         img = None
                     else:
                         img = cv2.resize(raw_img[0], (self.resolution[0], self.resolution[1]))[None,:,:]
+                elif self.num_channels == 3:
+                    if raw_img is None:
+                        img = None
+                    else:
+                        raw_img = np.transpose(raw_img,(1,2,0))
+                        img = cv2.resize(raw_img, (self.resolution[0], self.resolution[1]))
+                        img = np.transpose(img, (2,0,1))
                 else:
-                    raise NotImplementedError('not implemented for non-Grayscale images')
+                    raise NotImplementedError('only implemented for Grayscale and RGB images')
             else:
                 img = raw_img
                 

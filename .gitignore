@@ -1,2 +1,14 @@
 run_exp.py.show
 run_exp.py.train
+
+*.pyc
+*.meta
+*.index
+
+log*.txt
+
+events.out.tfevents*
+
+_vizdoom.ini
+
+*data-00000-of-00001

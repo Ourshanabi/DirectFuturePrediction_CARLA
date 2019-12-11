@@ -5,7 +5,11 @@ from __future__ import print_function
 import sys
 import os
 
-vizdoom_path = '../../../../toolboxes/ViZDoom_2017_03_31'
+if os.name == 'nt':
+    # Windows
+    vizdoom_path = 'C://Users//Rzhang//Anaconda3//envs//recognition//Lib//site-packages//vizdoom'
+else:
+    vizdoom_path = '../../../../toolboxes/ViZDoom_2017_03_31'
 sys.path = [os.path.join(vizdoom_path,'bin/python3')] + sys.path
 
 import vizdoom 

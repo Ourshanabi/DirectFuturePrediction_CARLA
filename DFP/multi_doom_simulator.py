@@ -3,6 +3,7 @@ Several doom simulators running otgether
 '''
 from __future__ import print_function
 from .doom_simulator import DoomSimulator
+from .Gym_simulator import Gym_simulator
 
 class MultiDoomSimulator:
 	
@@ -10,8 +11,12 @@ class MultiDoomSimulator:
 		
 		self.num_simulators = len(all_args)
 		self.simulators = []
+
 		for args in all_args:
-			self.simulators.append(DoomSimulator(args))
+			if args['gym']:
+				self.simulators.append(Gym_simulator(args))
+			else :
+				self.simulators.append(DoomSimulator(args))
 			
 		self.resolution = self.simulators[0].resolution
 		self.num_channels = self.simulators[0].num_channels

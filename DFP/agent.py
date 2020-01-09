@@ -30,6 +30,7 @@ class Agent:
         self.discrete_controls = args['discrete_controls']
         self.discrete_controls_manual = args['discrete_controls_manual'] # controls to be set "manually" (that is, by a user-specified function)
         self.opposite_button_pairs = args['opposite_button_pairs']
+        self.gym = args['gym'] # at least one action in gym
         self.prepare_controls_and_actions()
         
         # preprocessing
@@ -49,6 +50,8 @@ class Agent:
         self.random_objective_coeffs = args['random_objective_coeffs']
         self.objective_coeffs_temporal = args['objective_coeffs_temporal']
         self.objective_coeffs_distribution = args['objective_coeffs_distribution']
+
+       
         
         # net parameters
         self.conv_params = args['conv_params']
@@ -111,9 +114,15 @@ class Agent:
                 for bp in self.opposite_button_pairs:
                     if act[bp[0]] == act[bp[1]] == True:
                         valid=False
-                if valid:
-                    self.net_discrete_actions.append(act)
+                if valid: # at least on action in gym
+                    if not self.gym:
+                        self.net_discrete_actions.append(act)
+                    elif self.gym:
+                        if True in act:
+                            self.net_discrete_actions.append(act)
+
                     
+        print(self.net_discrete_actions)
         self.num_net_discrete_actions = len(self.net_discrete_actions)
         self.action_to_index = {tuple(val):ind for (ind,val) in enumerate(self.net_discrete_actions)}
         self.net_discrete_actions = np.array(self.net_discrete_actions)

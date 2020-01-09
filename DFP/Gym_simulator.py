@@ -15,6 +15,7 @@ import time
 import numpy as np
 import re
 import cv2
+import gym
 
 
 
@@ -43,21 +44,22 @@ def get_screen(env):
     # Resize, and add a batch dimension (BCHW)
     return resize(screen).unsqueeze(0).to(device)
 
-class DoomSimulator:
+class Gym_simulator:
     
     def __init__(self, args):        
-        # self.config = args['config']
-        # self.resolution = args['resolution']
-        # self.frame_skip = args['frame_skip']
-        # self.color_mode = args['color_mode']
-        # self.switch_maps = args['switch_maps']
-        # self.maps = args['maps']
-        # self.game_args = args['game_args']
+        self.config = args['config']
+        self.resolution = args['resolution']
+        self.frame_skip = args['frame_skip']
+        self.color_mode = args['color_mode']
+        self.switch_maps = args['switch_maps']
+        self.maps = args['maps']
+        self.game_args = args['game_args']
 
         self.env_name = args['env_name']
         self.resolution = args['resolution']
+        self.num_meas = args['num_meas']
 
-        self._env = gym.make('CartPole-v0').unwrapped
+        self._env = gym.make(self.env_name).unwrapped
 
 
 
@@ -66,7 +68,7 @@ class DoomSimulator:
         # self._game.set_doom_game_path(os.path.join(vizdoom_path,'freedoom2.wad'))
         # self._game.load_config(self.config)
         # self._game.add_game_args(self.game_args)
-        self.curr_map = 0
+        # self.curr_map = 0
         # self._game.set_doom_map(self.maps[self.curr_map])
         
         # # set resolution
@@ -78,22 +80,22 @@ class DoomSimulator:
         #     self._game.set_screen_resolution(getattr(vizdoom.ScreenResolution, 'RES_160X120'))
         self.resize = True
 
-        # # set color mode
-        # if self.color_mode == 'RGB':
-        #     self._game.set_screen_format(vizdoom.ScreenFormat.CRCGCB)
-        #     self.num_channels = 3
-        # elif self.color_mode == 'GRAY':
-        #     self._game.set_screen_format(vizdoom.ScreenFormat.GRAY8)
-        #     self.num_channels = 1
-        # else:
-        #     print("Unknown color mode")
-        #     raise
+        # set color mode
+        if self.color_mode == 'RGB':
+            self.num_channels = 3
+        elif self.color_mode == 'GRAY':
+            self.num_channels = 1
+        else:
+            print("Unknown color mode")
+            raise
 
         self.available_controls, self.continuous_controls, self.discrete_controls = self.analyze_controls(self.config)
-        self.num_buttons = 1 # hard coded 
+        self.num_buttons = self._env.action_space.n
         assert(self.num_buttons == len(self.discrete_controls) + len(self.continuous_controls))
         assert(len(self.continuous_controls) == 0) # only discrete for now
-        self.num_meas = self._game.get_available_game_variables_size()
+        
+
+        #self.num_meas = self._game.get_available_game_variables_size()
             
         self.meas_tags = []
         for nm in range(self.num_meas):
@@ -101,7 +103,12 @@ class DoomSimulator:
             
         self.episode_count = 0
         self.game_initialized = False
+
+    def get_screen(self):
+        screen = self._env.render(mode='rgb_array')
         
+        return screen
+
     def analyze_controls(self, config_file):
         with open(config_file, 'r') as myfile:
             config = myfile.read()
@@ -118,7 +125,6 @@ class DoomSimulator:
             
     def close_game(self):
         if self.game_initialized:
-            self._game.close()
             self.game_initialized = False
             
     def step(self, action=0):
@@ -135,7 +141,7 @@ class DoomSimulator:
         """
         self.init_game()
 
-        state, rwrd, done, _ = self._env.step(action)
+        state, rwrd, done, _ = self._env.step(np.argmax(action))
         
         
         if state is None:
@@ -144,23 +150,20 @@ class DoomSimulator:
         else:        
             
             if self.color_mode == 'RGB':
-                raw_img = self._env.render(mode='rgb_array')
+                raw_img = self.get_screen()[None,:,:,:]
             elif self.color_mode == 'GRAY':
                 raw_img = np.expand_dims(state.screen_buffer,0)
                 
             if self.resize:
-                if self.num_channels == 1:
                     if raw_img is None or (isinstance(raw_img, list) and raw_img[0] is None):
                         img = None
                     else:
-                        img = cv2.resize(raw_img[0], (self.resolution[0], self.resolution[1]))[None,:,:]
-                else:
-                    raise NotImplementedError('not implemented for non-Grayscale images')
+                        img = cv2.resize(raw_img[0], (self.resolution[0], self.resolution[1])).transpose((2, 0, 1))
             else:
                 img = raw_img
                 
-            meas = state # will decide later what is a good measurement for each env
-            
+            meas = state #[[0,2]] # will decide later what is a good measurement for each env
+
         term = done
         
         if term:

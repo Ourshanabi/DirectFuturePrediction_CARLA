@@ -58,6 +58,10 @@ class MultiExperiment:
         else:
             # if we have to replicate a single simulator
             self.multi_simulator = MultiDoomSimulator([simulator_args] * simulator_args['num_simulators'])
+
+
+
+
         agent_args['discrete_controls'] = self.multi_simulator.discrete_controls
         agent_args['continuous_controls'] = self.multi_simulator.continuous_controls
 

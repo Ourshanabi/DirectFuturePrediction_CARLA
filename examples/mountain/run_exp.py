@@ -12,19 +12,19 @@ def main(main_args):
 	
 	## Target maker
 	target_maker_args = {}
-	target_maker_args['future_steps'] = [1,2,4,8,16,32]
+	target_maker_args['future_steps'] = [1,2,4,8]
 	target_maker_args['meas_to_predict'] = [0,1]
-	target_maker_args['min_num_targs'] = 3	
+	target_maker_args['min_num_targs'] = 2	
 	target_maker_args['rwrd_schedule_type'] = 'exp'
 	target_maker_args['gammas'] = []
 	target_maker_args['invalid_targets_replacement'] = 'nan'
 	
 	## Simulator
 	simulator_args = {}
-	simulator_args['config'] = '../../maps/cartpole.cfg'
+	simulator_args['config'] = '../../maps/mountain.cfg'
 	simulator_args['resolution'] = (84,84)
 	simulator_args['frame_skip'] = 0
-	simulator_args['env_name'] = 'CartPole-v1'
+	simulator_args['env_name'] = 'MountainCar-v0'
 	simulator_args['color_mode'] = 'RGB'	
 	simulator_args['gym'] = True
 	simulator_args['num_meas'] = 2
@@ -46,7 +46,7 @@ def main(main_args):
 	
 	# Test policy experience
 	test_policy_experience_args = train_experience_args.copy()
-	test_policy_experience_args['memory_capacity'] = 1000
+	test_policy_experience_args['memory_capacity'] = 5000
 		
 	## Agent	
 	agent_args = {}
@@ -56,17 +56,17 @@ def main(main_args):
 	
 	# preprocessing
 	agent_args['preprocess_input_images'] = lambda x: x / 255. - 0.5
-	agent_args['preprocess_input_measurements'] = lambda x: x/12 - 0.5
+	agent_args['preprocess_input_measurements'] = lambda x: x
 	targ_scale_coeffs = np.expand_dims((np.expand_dims(np.array([2.4,12]),1) * np.ones((1,len(target_maker_args['future_steps'])))).flatten(),0)
 	agent_args['preprocess_input_targets'] = lambda x: x / targ_scale_coeffs
 	agent_args['postprocess_predictions'] = lambda x: x * targ_scale_coeffs
 	agent_args['discrete_controls_manual'] = []
-	agent_args['opposite_button_pairs'] = [[0,1]]
+	agent_args['opposite_button_pairs'] = [[0,1],[0,2],[1,2]]
 
 		
 	# agent properties
-	agent_args['objective_coeffs_temporal'] = [0.1,0.1,1,1,1,1]
-	agent_args['objective_coeffs_meas'] = [-0.01, -100]# angle and position
+	agent_args['objective_coeffs_temporal'] = [0.1,0.1,1,1]
+	agent_args['objective_coeffs_meas'] = [1, 1000]# angle and position position and speed
 	agent_args['random_exploration_schedule'] = lambda step: (0.02 + 14500. / (float(step) + 15000.))
 	agent_args['new_memories_per_batch'] = 8
 
@@ -111,11 +111,11 @@ def main(main_args):
 	# experiment arguments
 	experiment_args = {}
 	experiment_args['num_train_iterations'] = 820000
-	experiment_args['test_objective_coeffs_temporal'] = np.array([0.1,0.1,1,1,1,1])
-	experiment_args['test_objective_coeffs_meas'] = np.array([-0.01, -100])
+	experiment_args['test_objective_coeffs_temporal'] = np.array([0.1,0.1,1,1])
+	experiment_args['test_objective_coeffs_meas'] = np.array([1, 1])
 	experiment_args['test_random_prob'] = 0.
-	experiment_args['test_checkpoint'] = 'checkpoints/2017_04_09_09_07_45'
-	experiment_args['test_policy_num_steps'] = 2000
+	experiment_args['test_checkpoint'] = 'checkpoints/2019'
+	experiment_args['test_policy_num_steps'] = 5000
 	experiment_args['show_predictions'] = False
 	experiment_args['multiplayer'] = False
 	

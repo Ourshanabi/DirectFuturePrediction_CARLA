@@ -30,7 +30,8 @@ class Agent:
         self.discrete_controls = args['discrete_controls']
         self.discrete_controls_manual = args['discrete_controls_manual'] # controls to be set "manually" (that is, by a user-specified function)
         self.opposite_button_pairs = args['opposite_button_pairs']
-        self.gym = args['gym'] # at least one action in gym
+        self.gym = args['gym'] #have to add false here if playing doom or carla# at least one action in gym
+
         self.prepare_controls_and_actions()
         
         # preprocessing
@@ -50,6 +51,9 @@ class Agent:
         self.random_objective_coeffs = args['random_objective_coeffs']
         self.objective_coeffs_temporal = args['objective_coeffs_temporal']
         self.objective_coeffs_distribution = args['objective_coeffs_distribution']
+
+        # let reward taken by a function of the mesurment
+        self.objective_function = args['objective_function']
 
        
         

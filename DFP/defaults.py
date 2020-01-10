@@ -49,12 +49,15 @@ agent_args['preprocess_input_targets'] = lambda x: x
 agent_args['postprocess_predictions'] = lambda x: x
 agent_args['discrete_controls_manual'] = []
 agent_args['opposite_button_pairs'] = []
+agent_args['gym'] = False
+
 	
 # agent properties
 agent_args['new_memories_per_batch'] = 8
 agent_args['add_experiences_every'] = 1
 agent_args['random_objective_coeffs'] = False
 agent_args['objective_coeffs_distribution'] = 'none'
+agent_args['objective_function'] = None
 
 # net parameters
 agent_args['conv_params']     = None 

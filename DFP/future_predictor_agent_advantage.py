@@ -84,13 +84,18 @@ class FuturePredictorAgentAdvantage(Agent):
                                                               self.input_objective_coeffs: curr_objective_coeffs})
 
         
-        #self.curr_predictions = predictions[:,:,self.objective_indices]*curr_objective_coeffs[:,None,:] 
+        #
 
         #self.curr_predictions = np.abs(predictions[:,:,self.objective_indices])*curr_objective_coeffs[:,None,:] #for my carpole pb
 
-        self.curr_predictions = predictions[:,:,self.objective_indices]
-        self.curr_predictions[:,:,[1]] = np.abs(self.curr_predictions[:,:,[1]])
-        self.curr_predictions = self.curr_predictions*curr_objective_coeffs[:,None,:]
+        # if it is a gym or a carla simulator agent, the reward can be a function of the musurement and not only linear
+        if self.gym :
+            self.curr_predictions = predictions[:,:,self.objective_indices]
+            for i,f in enumerate(self.objective_function):
+                self.curr_predictions[:,:,i] = f(self.curr_predictions[:,:,i])
+        else :
+            self.curr_predictions = predictions[:,:,self.objective_indices]*curr_objective_coeffs[:,None,:] 
+
 
         self.curr_objectives = np.sum(self.curr_predictions, axis=2)
         

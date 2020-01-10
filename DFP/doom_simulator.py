@@ -52,6 +52,10 @@ class DoomSimulator:
         if self.color_mode == 'RGB':
             self._game.set_screen_format(vizdoom.ScreenFormat.CRCGCB)
             self.num_channels = 3
+        elif self.color_mode == 'RGBD':
+            self._game.set_screen_format(vizdoom.ScreenFormat.CRCGCB)
+            self._game.set_depth_buffer_enabled(True)
+            self.num_channels = 4
         elif self.color_mode == 'GRAY':
             self._game.set_screen_format(vizdoom.ScreenFormat.GRAY8)
             self.num_channels = 1
@@ -120,7 +124,11 @@ class DoomSimulator:
                 raw_img = state.screen_buffer
             elif self.color_mode == 'GRAY':
                 raw_img = np.expand_dims(state.screen_buffer,0)
-                
+            elif self.color_mode == 'RGBD':
+                screen = state.screen_buffer
+                depth = state.depth_buffer[np.newaxis]
+                raw_img = np.vstack((screen, depth))
+
             if self.resize:
                 if self.num_channels == 1:
                     if raw_img is None:
@@ -134,8 +142,15 @@ class DoomSimulator:
                         raw_img = np.transpose(raw_img,(1,2,0))
                         img = cv2.resize(raw_img, (self.resolution[0], self.resolution[1]))
                         img = np.transpose(img, (2,0,1))
+                elif self.num_channels == 4:
+                    if raw_img is None:
+                        img = None
+                    else:
+                        raw_img = raw_img.transpose((1,2,0))
+                        img = cv2.resize(raw_img, (self.resolution[0], self.resolution[1]))
+                        img = img.transpose((2,0,1))
                 else:
-                    raise NotImplementedError('only implemented for Grayscale and RGB images')
+                    raise NotImplementedError('only implemented for Grayscale and RGB and RGBD images')
             else:
                 img = raw_img
                 

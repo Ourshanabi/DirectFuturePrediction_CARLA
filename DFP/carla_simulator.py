@@ -36,13 +36,10 @@ import numpy as np
 #     pass
 
 import carla
-from carla.carla_server_pb2 import Control
-from carla import ColorConverter as cc
 
 class CarlaSimulator:
 
     def __init__(self, args):
-        self.config = args['config']
         self.resolution = args['resolution']
         self.frame_skip = args['frame_skip']
         self.color_mode = args['color_mode']
@@ -50,12 +47,14 @@ class CarlaSimulator:
         self.maps = args['maps']
         self.game_args = args['game_args']
         
+        self.num_ped = 10
+                
         self.available_controls, self.continuous_controls, self.continuous_range, self.discrete_controls = self.analyze_controls()  
-        self.num_action = len(self.available_controls)
+        self.num_buttons = len(self.available_controls)
         assert(self.num_buttons == len(self.discrete_controls) + len(self.continuous_controls))
         assert(len(self.continuous_controls) == 0) # only discrete for now
         
-        self.client = carla.Client(args.host, args.port)
+        self.client = carla.Client(args['host'], args['port'])
         self.client.set_timeout(10.0)
 
         self.world = self.client.get_world()

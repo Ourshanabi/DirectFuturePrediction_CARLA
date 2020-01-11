@@ -29,7 +29,7 @@ class MultiDoomSimulator:
 		self.maps = self.simulators[0].maps
 		self.continuous_controls = self.simulators[0].continuous_controls
 		self.discrete_controls = self.simulators[0].discrete_controls
-			
+
 	def step(self, actions):
 		"""
 		Action can be either the number of action or the actual list defining the action

@@ -30,7 +30,10 @@ class Agent:
         self.discrete_controls = args['discrete_controls']
         self.discrete_controls_manual = args['discrete_controls_manual'] # controls to be set "manually" (that is, by a user-specified function)
         self.opposite_button_pairs = args['opposite_button_pairs']
-        self.gym = args['gym'] # at least one action in gym
+        try:
+            self.gym = args['gym'] # at least one action in gym
+        except KeyError:
+            self.gym = False
         self.prepare_controls_and_actions()
         
         # preprocessing

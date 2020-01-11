@@ -64,7 +64,6 @@ class MultiExperienceMemory:
             term: terminal state
             act: action taken
         '''
-
         self._images[self._curr_indices] = imgs
         self._measurements[self._curr_indices] = meass
         self._rewards[self._curr_indices] = rwrds

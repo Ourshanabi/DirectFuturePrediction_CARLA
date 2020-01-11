@@ -20,9 +20,10 @@ def main(main_args):
 	
 	## Simulator
 	simulator_args = {}
-	simulator_args['resolution'] = (150,100)
+	simulator_args['config'] = '../../carla.cfg'
+	simulator_args['resolution'] = (160,120)
 	simulator_args['frame_skip'] = 4
-	simulator_args['color_mode'] = 'RGBD'	
+	simulator_args['color_mode'] = 'RGB'	
 	simulator_args['maps'] = ['MAP01']
 	simulator_args['switch_maps'] = False
 	simulator_args['environnement'] = 'carla'

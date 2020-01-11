@@ -90,9 +90,14 @@ class FuturePredictorAgentAdvantage(Agent):
 
         # if it is a gym or a carla simulator agent, the reward can be a function of the musurement and not only linear
         if self.gym :
+
+            L_time = int(len(self.objective_indices)/len(self.objective_function))
             self.curr_predictions = predictions[:,:,self.objective_indices]
             for i,f in enumerate(self.objective_function):
-                self.curr_predictions[:,:,i] = f(self.curr_predictions[:,:,i])
+                 # each predicted mesurment has to be pass trought the dedicated function, mesurement i are located in i*L_time:i*(L_time+1)
+                self.curr_predictions[:,:,i*L_time:i*(L_time+1)] = f(self.curr_predictions[:,:,i*L_time:i*(L_time+1)])
+            self.curr_predictions = self.curr_predictions*curr_objective_coeffs[:,None,:] 
+
         else :
             self.curr_predictions = predictions[:,:,self.objective_indices]*curr_objective_coeffs[:,None,:] 
 
@@ -100,6 +105,7 @@ class FuturePredictorAgentAdvantage(Agent):
         self.curr_objectives = np.sum(self.curr_predictions, axis=2)
         
         curr_action = np.argmax(self.curr_objectives, axis=1)
+
         
         return curr_action
         

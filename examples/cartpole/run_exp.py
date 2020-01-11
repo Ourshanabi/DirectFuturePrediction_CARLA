@@ -34,8 +34,8 @@ def main(main_args):
 	## Experience
 	# Train experience
 	train_experience_args = {}
-	train_experience_args['memory_capacity'] = 10000
-	train_experience_args['history_length'] = 4
+	train_experience_args['memory_capacity'] = 20000
+	train_experience_args['history_length'] = 3
 	train_experience_args['history_step'] = 1
 	train_experience_args['action_format'] = 'enumerate'
 	train_experience_args['shared'] = False
@@ -57,7 +57,7 @@ def main(main_args):
 	# preprocessing
 	agent_args['preprocess_input_images'] = lambda x: x / 255. - 0.5
 	agent_args['preprocess_input_measurements'] = lambda x: x
-	targ_scale_coeffs = np.expand_dims((np.expand_dims(np.array([2.4,12]),1) * np.ones((1,len(target_maker_args['future_steps'])))).flatten(),0)
+	targ_scale_coeffs = np.expand_dims((np.expand_dims(np.array([2,12.]),1) * np.ones((1,len(target_maker_args['future_steps'])))).flatten(),0)
 	agent_args['preprocess_input_targets'] = lambda x: x / targ_scale_coeffs
 	agent_args['postprocess_predictions'] = lambda x: x * targ_scale_coeffs
 	agent_args['discrete_controls_manual'] = []
@@ -65,14 +65,14 @@ def main(main_args):
 
 		
 	# agent properties
-	agent_args['objective_coeffs_temporal'] = [0.1,0.1,1,1,1,1]
-	agent_args['objective_coeffs_meas'] = [-0.01, -100]# position and angle pos (-4.8, 4.8) , angle (-24, 24 )
+	agent_args['objective_coeffs_temporal'] = [0.1,1,1,1,1,1]
+	agent_args['objective_coeffs_meas'] = [1,-1]# position and angle pos (-4.8, 4.8) , angle (-24, 24 )
 
 	def f1(x):
-		return -np.abs(x)
+		return np.abs(x)
 
 	def f2(x):
-		return -1000*x**2
+		return np.abs(x)
 
 
 	agent_args['objective_function'] = [f1, f2]  # do not deviate from center
@@ -122,10 +122,10 @@ def main(main_args):
 	# experiment arguments
 	experiment_args = {}
 	experiment_args['num_train_iterations'] = 820000
-	experiment_args['test_objective_coeffs_temporal'] = np.array([0.1,0.1,1,1,1,1])
-	experiment_args['test_objective_coeffs_meas'] = np.array([-0.01, -100])
+	experiment_args['test_objective_coeffs_temporal'] = np.array([0.1,1,1,1,1,1])
+	experiment_args['test_objective_coeffs_meas'] = np.array([1,-1])
 	experiment_args['test_random_prob'] = 0.
-	experiment_args['test_checkpoint'] = 'checkpoints/2017_04_09_09_07_45'
+	experiment_args['test_checkpoint'] = 'checkpoints/2020_01_11_15_40_47'
 	experiment_args['test_policy_num_steps'] = 2000
 	experiment_args['show_predictions'] = False
 	experiment_args['multiplayer'] = False

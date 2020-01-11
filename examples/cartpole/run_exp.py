@@ -65,8 +65,8 @@ def main(main_args):
 
 		
 	# agent properties
-	agent_args['objective_coeffs_temporal'] = [0.1,1,1,1,1,1]
-	agent_args['objective_coeffs_meas'] = [1,-1]# position and angle pos (-4.8, 4.8) , angle (-24, 24 )
+	agent_args['objective_coeffs_temporal'] = [0.1,0.1,0.1,1,1,1]
+	agent_args['objective_coeffs_meas'] = [-0.1,-1]# position and angle pos (-4.8, 4.8) , angle (-24, 24 )
 
 	def f1(x):
 		return np.abs(x)
@@ -122,8 +122,8 @@ def main(main_args):
 	# experiment arguments
 	experiment_args = {}
 	experiment_args['num_train_iterations'] = 820000
-	experiment_args['test_objective_coeffs_temporal'] = np.array([0.1,1,1,1,1,1])
-	experiment_args['test_objective_coeffs_meas'] = np.array([1,-1])
+	experiment_args['test_objective_coeffs_temporal'] = np.array([0.1,0.1,0.1,1,1,1])
+	experiment_args['test_objective_coeffs_meas'] = np.array([-0.1,-1])
 	experiment_args['test_random_prob'] = 0.
 	experiment_args['test_checkpoint'] = 'checkpoints/2020_01_11_15_40_47'
 	experiment_args['test_policy_num_steps'] = 2000

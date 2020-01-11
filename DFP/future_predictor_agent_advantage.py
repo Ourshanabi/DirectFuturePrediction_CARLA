@@ -95,7 +95,7 @@ class FuturePredictorAgentAdvantage(Agent):
             self.curr_predictions = predictions[:,:,self.objective_indices]
             for i,f in enumerate(self.objective_function):
                  # each predicted mesurment has to be pass trought the dedicated function, mesurement i are located in i*L_time:i*(L_time+1)
-                self.curr_predictions[:,:,i*L_time:i*(L_time+1)] = f(self.curr_predictions[:,:,i*L_time:i*(L_time+1)])
+                self.curr_predictions[:,:,i*L_time:(i+1)*L_time] = f(self.curr_predictions[:,:,i*L_time:(i+1)*L_time])
             self.curr_predictions = self.curr_predictions*curr_objective_coeffs[:,None,:] 
 
         else :

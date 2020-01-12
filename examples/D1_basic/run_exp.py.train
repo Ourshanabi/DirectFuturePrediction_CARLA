@@ -26,6 +26,7 @@ def main(main_args):
 	simulator_args['color_mode'] = 'GRAY'	
 	simulator_args['maps'] = ['MAP01']
 	simulator_args['switch_maps'] = False
+	simulator_args['environnement'] = 'doom'
 	#train
 	simulator_args['num_simulators'] = 8
 	
@@ -48,7 +49,8 @@ def main(main_args):
 		
 	## Agent	
 	agent_args = {}
-	
+	agent_args['gym'] = False
+
 	# agent type
 	agent_args['agent_type'] = 'advantage'
 	

@@ -54,6 +54,9 @@ class Agent:
         self.objective_coeffs_temporal = args['objective_coeffs_temporal']
         self.objective_coeffs_distribution = args['objective_coeffs_distribution']
 
+        # let reward taken by a function of the mesurment
+        self.objective_function = args['objective_function']
+
        
         
         # net parameters

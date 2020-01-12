@@ -12,7 +12,7 @@ def main(main_args):
 	## Target maker
 	target_maker_args = {}
 	target_maker_args['future_steps'] = [1,2,4,8,16,32]
-	target_maker_args['meas_to_predict'] = [0]
+	target_maker_args['meas_to_predict'] = [12]
 	target_maker_args['min_num_targs'] = 3	
 	target_maker_args['rwrd_schedule_type'] = 'exp'
 	target_maker_args['gammas'] = []
@@ -29,6 +29,7 @@ def main(main_args):
 	simulator_args['environnement'] = 'carla'
 	simulator_args['host'] = 'localhost'
 	simulator_args['port'] = 2000
+	simulator_args['horizon'] = 4000
 	#train
 	simulator_args['num_simulators'] = 8
 	

@@ -47,8 +47,11 @@ class CarlaSimulator:
         self.switch_maps = args['switch_maps']
         self.maps = args['maps']
         self.game_args = args['game_args']
-        
+
         self.num_ped = 10
+
+        self.num_step = args['frame_skip']
+        self.horizon = args['horizon']
                 
         self.available_controls, self.continuous_controls, self.continuous_range, self.discrete_controls = self.analyze_controls()  
         self.num_buttons = len(self.available_controls)
@@ -80,11 +83,13 @@ class CarlaSimulator:
         self.vehicle_blueprints = self.blueprint_library.filter('vehicle.*')
         self.pedestrians_blueprints = self.blueprint_library.filter('walker.pedestrian.*')
 
-        self.spawn_points = self.world.get_map().get_spawn_points()
+        spawn_points = self.world.get_map().get_spawn_points()
+        # Hope to get a different one for each sim
+        self.spawn_point = random.choice(spawn_points) 
 
         self.initialized = False
 
-        self.raw_img = None
+        self.raw_img = np.zeros((3, self.resolution[1], self.resolution[0]))
         self.raw_depth = None
         self.collided = False
         self.lane_crossed = False
@@ -92,8 +97,8 @@ class CarlaSimulator:
     def update_img(self, img):
         W, H = img.width, img.height
         img_np = np.asarray(img.raw_data)
-        self.raw_img = img_np.reshape(H,W,4)[:,:,:3]
-        print("pif")
+        img_np = img_np.reshape(H,W,4)[:,:,:3]
+        self.raw_img = img_np.transpose((2,0,1))
 
     def update_depth(self, depth):
         # imnp_ss = np.asarray(image_ss.raw_data)
@@ -118,18 +123,19 @@ class CarlaSimulator:
     def init_game(self):
         if not self.initialized:
             vehicle_bp = random.choice(self.vehicle_blueprints)
-            transform = random.choice(self.spawn_points)
-            self.actor = self.world.spawn_actor(vehicle_bp, transform)
+            self.actor = self.world.spawn_actor(vehicle_bp, self.spawn_point)
 
             camera_bp = self.blueprint_library.find('sensor.camera.rgb')
+            camera_bp.set_attribute('image_size_x', str(self.resolution[0]))
+            camera_bp.set_attribute('image_size_y', str(self.resolution[1]))
             relative_transform = carla.Transform(carla.Location(x=0, y=0, z=1.5))
             self.camera = self.world.spawn_actor(camera_bp, relative_transform, attach_to = self.actor)
             self.camera.image_size_x, self.camera.image_size_y = self.resolution
             self.camera.listen(self.update_img)
 
             if self.color_mode == 'RGBD':
-                camera_ss_bp = blueprint_library.find('sensor.camera.semantic_segmentation')
-                self.camera_ss = world.spawn_actor(camera_ss_bp, relative_transform, attach_to = self.actor)
+                camera_ss_bp = self.blueprint_library.find('sensor.camera.semantic_segmentation')
+                self.camera_ss = self.world.spawn_actor(camera_ss_bp, relative_transform, attach_to = self.actor)
                 self.camera_ss.image_size_x, self.camera_ss.image_size_y = self.resolution
                 self.camera_ss.listen(self.update_depth)
             
@@ -144,6 +150,7 @@ class CarlaSimulator:
             self.crossing_sensor.listen(self.lane_handler)
 
             self.world.tick()
+            self.len_ep = 0
 
             self.initialized = True
 
@@ -185,9 +192,9 @@ class CarlaSimulator:
         self.apply_action(action)
         self.collided = False
         self.lane_crossed = False
-        print("start tick")
-        self.world.tick()
-        print("end tick")
+        for _ in range(self.num_step):
+            self.world.tick()
+        self.len_ep += 1
 
         raw_img = self.raw_img
         if self.color_mode == 'RGBD':
@@ -208,7 +215,7 @@ class CarlaSimulator:
         meas[12] = self.collided
         meas[13] = self.lane_crossed
 
-        term = self.collided
+        term = self.collided or (self.len_ep >= self.horizon)
 
         speed = (vel.x**2 + vel.y**2 + vel.z**2)**0.5
 

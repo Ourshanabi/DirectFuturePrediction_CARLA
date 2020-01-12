@@ -12,7 +12,7 @@ def main(main_args):
 	## Target maker
 	target_maker_args = {}
 	target_maker_args['future_steps'] = [1,2,4,8,16,32]
-	target_maker_args['meas_to_predict'] = [12, 13]
+	target_maker_args['meas_to_predict'] = [12]
 	target_maker_args['min_num_targs'] = 3	
 	target_maker_args['rwrd_schedule_type'] = 'exp'
 	target_maker_args['gammas'] = []
@@ -66,7 +66,7 @@ def main(main_args):
 		
 	# agent properties
 	agent_args['objective_coeffs_temporal'] = [0., 0. ,0. ,0.5, 0.5, 1.]
-	agent_args['objective_coeffs_meas'] = [-1., -0.5]
+	agent_args['objective_coeffs_meas'] = [-1.]
 	agent_args['random_exploration_schedule'] = lambda step: (0.02 + 145000. / (float(step) + 150000.))
 	agent_args['new_memories_per_batch'] = 8
 	
@@ -110,7 +110,7 @@ def main(main_args):
 	experiment_args = {}
 	experiment_args['num_train_iterations'] = 820000
 	experiment_args['test_objective_coeffs_temporal'] = np.array([0., 0., 0., 0.5, 0.5, 1.])
-	experiment_args['test_objective_coeffs_meas'] = np.array([-1.,-0.5])
+	experiment_args['test_objective_coeffs_meas'] = np.array([-1.])
 	experiment_args['test_random_prob'] = 0.
 	experiment_args['test_checkpoint'] = 'checkpoints/2020_01_12_19_21_13'
 	experiment_args['test_policy_num_steps'] = 2000

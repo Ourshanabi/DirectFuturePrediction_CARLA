@@ -57,7 +57,7 @@ def main(main_args):
 	# preprocessing
 	agent_args['preprocess_input_images'] = lambda x: x / 255. - 0.5
 	agent_args['preprocess_input_measurements'] = lambda x: x
-	targ_scale_coeffs = np.expand_dims((np.expand_dims(np.array([2,12.]),1) * np.ones((1,len(target_maker_args['future_steps'])))).flatten(),0)
+	targ_scale_coeffs = np.expand_dims((np.expand_dims(np.array([1,12.]),1) * np.ones((1,len(target_maker_args['future_steps'])))).flatten(),0)
 	agent_args['preprocess_input_targets'] = lambda x: x / targ_scale_coeffs
 	agent_args['postprocess_predictions'] = lambda x: x * targ_scale_coeffs
 	agent_args['discrete_controls_manual'] = []
@@ -69,7 +69,7 @@ def main(main_args):
 	agent_args['objective_coeffs_meas'] = [-0.1,-1]# position and angle pos (-4.8, 4.8) , angle (-24, 24 )
 
 	def f1(x):
-		return np.abs(x)
+		return x**2
 
 	def f2(x):
 		return np.abs(x)

@@ -4,6 +4,7 @@ Several doom simulators running otgether
 from __future__ import print_function
 from .doom_simulator import DoomSimulator
 from .Gym_simulator import Gym_simulator
+from .carla_simulator import CarlaSimulator
 
 class MultiDoomSimulator:
 	
@@ -13,11 +14,13 @@ class MultiDoomSimulator:
 		self.simulators = []
 
 		for args in all_args:
-			if args['gym']:
+			if args['environnement'] == 'gym':
 				self.simulators.append(Gym_simulator(args))
-			else :
+			elif args['environnement'] == 'doom':
 				self.simulators.append(DoomSimulator(args))
-			
+			elif args['environnement'] == 'carla':
+				self.simulators.append(CarlaSimulator(args))
+				
 		self.resolution = self.simulators[0].resolution
 		self.num_channels = self.simulators[0].num_channels
 		self.num_meas = self.simulators[0].num_meas
@@ -26,7 +29,7 @@ class MultiDoomSimulator:
 		self.maps = self.simulators[0].maps
 		self.continuous_controls = self.simulators[0].continuous_controls
 		self.discrete_controls = self.simulators[0].discrete_controls
-			
+
 	def step(self, actions):
 		"""
 		Action can be either the number of action or the actual list defining the action

@@ -26,7 +26,7 @@ def main(main_args):
 	simulator_args['frame_skip'] = 0
 	simulator_args['env_name'] = 'MountainCar-v0'
 	simulator_args['color_mode'] = 'RGB'	
-	simulator_args['gym'] = True
+	simulator_args['environnement'] = 'gym'
 	simulator_args['num_meas'] = 2
 	#train
 	simulator_args['num_simulators'] = 8

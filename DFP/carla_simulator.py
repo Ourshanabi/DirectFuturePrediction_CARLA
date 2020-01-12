@@ -50,7 +50,7 @@ class CarlaSimulator:
 
         self.num_ped = 10
 
-        self.num_step = args['frame_skip']
+        self.num_step = args['multi_frame']
         self.horizon = args['horizon']
                 
         self.available_controls, self.continuous_controls, self.continuous_range, self.discrete_controls = self.analyze_controls()  
@@ -59,7 +59,7 @@ class CarlaSimulator:
         assert(len(self.continuous_controls) == 0) # only discrete for now
         
         self.client = carla.Client(args['host'], args['port'])
-        self.client.set_timeout(10.0)
+        self.client.set_timeout(30.0)
 
         self.world = self.client.get_world()
 
@@ -167,7 +167,7 @@ class CarlaSimulator:
     def apply_action(self, action):
         control = carla.VehicleControl(
             throttle = action[0],
-            steer = action[3] - action[2],
+            steer = 0.5 * (action[3] - action[2]),
             brake = action[1],
             hand_brake = False,
             reverse = False,
@@ -243,6 +243,7 @@ class CarlaSimulator:
         print("\n\n ## Next map not implemented for Carla ## \n\n")
     
     def new_episode(self):
-        self.close_game()
+        self.len_ep = 0
+        self.actor.set_transform(self.spawn_point)
 
 

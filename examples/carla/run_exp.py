@@ -30,6 +30,7 @@ def main(main_args):
 	simulator_args['host'] = 'localhost'
 	simulator_args['port'] = 2000
 	simulator_args['horizon'] = 4000
+	simulator_args['multi_frame'] = 1
 	#train
 	simulator_args['num_simulators'] = 8
 	

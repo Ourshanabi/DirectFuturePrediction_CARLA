@@ -50,7 +50,7 @@ def main(main_args):
 	
 	# Test policy experience
 	test_policy_experience_args = train_experience_args.copy()
-	test_policy_experience_args['memory_capacity'] = 55000
+	test_policy_experience_args['memory_capacity'] = 20000
 		
 	## Agent	
 	agent_args = {}

@@ -89,7 +89,7 @@ class FuturePredictorAgentAdvantage(Agent):
         #self.curr_predictions = np.abs(predictions[:,:,self.objective_indices])*curr_objective_coeffs[:,None,:] #for my carpole pb
 
         # if it is a gym or a carla simulator agent, the reward can be a function of the musurement and not only linear
-        if self.gym :
+        if self.gym or self.carla:
 
             L_time = int(len(self.objective_indices)/len(self.objective_function))
             self.curr_predictions = predictions[:,:,self.objective_indices]

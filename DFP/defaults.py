@@ -50,6 +50,7 @@ agent_args['postprocess_predictions'] = lambda x: x
 agent_args['discrete_controls_manual'] = []
 agent_args['opposite_button_pairs'] = []
 agent_args['gym'] = False
+agent_args['carla'] = False
 
 	
 # agent properties

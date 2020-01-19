@@ -35,6 +35,15 @@ import numpy as np
 # except IndexError:
 #     pass
 
+
+try:
+    sys.path.append(glob.glob('C:/Users/Rzhang/Desktop/carla/PythonAPI/carla/dist/carla-*%d.%d-%s.egg' % (
+        sys.version_info.major,
+        sys.version_info.minor,
+        'win-amd64' if os.name == 'nt' else 'linux-x86_64'))[0])
+except IndexError:
+    pass
+
 import carla
 
 class CarlaSimulator:
@@ -69,12 +78,15 @@ class CarlaSimulator:
             raise ValueError("RGB is the only mode implemented")
 
         # measures
-        self.num_meas = 14 # pos 6D, vel 3D, acc 3D, collision 1D, lane invasion 1D
+        self.num_meas = 15 # pos 6D, vel 3D, acc 3D, collision 1D, lane invasion 1D, speed 1D,
 
 
         #Synchronous mode
         settings = self.world.get_settings()
         settings.synchronous_mode = True
+        settings.fixed_delta_seconds = 0.05
+        settings.no_rendering_mode = True
+        # no rendering
         self.world.apply_settings(settings)
         self.world.tick()
 
@@ -207,6 +219,8 @@ class CarlaSimulator:
         vel = self.actor.get_velocity()
         acc = self.actor.get_acceleration()
         
+        measurement,_ = self.client.read_data()
+
         meas = np.zeros(self.num_meas)
         meas[:3] = pos.x, pos.y, pos.z
         meas[3:6] = rot.pitch, rot.yaw, rot.roll
@@ -215,9 +229,11 @@ class CarlaSimulator:
         meas[12] = self.collided
         meas[13] = self.lane_crossed
 
-        term = self.collided or (self.len_ep >= self.horizon)
+        term = self.collided or (self.len_ep >= self.horizon) # l' agent ne voit pas assez de collision je pense
 
         speed = (vel.x**2 + vel.y**2 + vel.z**2)**0.5
+
+        meas[14] = speed
 
         target_speed = 5
 

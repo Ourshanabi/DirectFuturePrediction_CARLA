@@ -32,8 +32,10 @@ class Agent:
         self.opposite_button_pairs = args['opposite_button_pairs']
         try:
             self.gym = args['gym'] # at least one action in gym
+            self.carla = args['carla']
         except KeyError:
             self.gym = False
+            self.carla = False # Those options are put to False in the default settings
         self.prepare_controls_and_actions()
         
         # preprocessing

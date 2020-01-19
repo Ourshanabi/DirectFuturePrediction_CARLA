@@ -61,6 +61,8 @@ class Gym_simulator:
 
         self._env = gym.make(self.env_name).unwrapped
 
+        self.counter = 0
+
 
 
         # self._game = vizdoom.DoomGame()
@@ -122,6 +124,7 @@ class Gym_simulator:
         if not self.game_initialized:
             self._env.reset()
             self.game_initialized = True
+            self.counter = 0
             
     def close_game(self):
         if self.game_initialized:
@@ -142,6 +145,7 @@ class Gym_simulator:
         self.init_game()
 
         state, rwrd, done, _ = self._env.step(np.argmax(action))
+        self.counter += 1
         
         
         if state is None:
@@ -167,10 +171,18 @@ class Gym_simulator:
         term = done
         
         if term:
+            if self.env_name == 'CartPole-v1':
+                if self.counter > 200:
+                    print("EPISODE DONE IN")
+                    print(self.counter)
+            else : 
+                print("EPISODE DONE IN")
+                print(self.counter)
             self.new_episode() # in multiplayer multi_simulator takes care of this            
             img = np.zeros((self.num_channels, self.resolution[1], self.resolution[0]), dtype=np.uint8) # should ideally put nan here, but since it's an int...
             meas = np.zeros(self.num_meas, dtype=np.uint32) # should ideally put nan here, but since it's an int...
-            
+
+
         return img, meas, rwrd, term
     
     def get_random_action(self):
@@ -181,4 +193,5 @@ class Gym_simulator:
     
     def new_episode(self):
         self.episode_count += 1
+        self.counter = 0
         self._env.reset()

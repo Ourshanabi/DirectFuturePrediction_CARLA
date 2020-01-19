@@ -47,7 +47,7 @@ def main(main_args):
 	
 	# Test policy experience
 	test_policy_experience_args = train_experience_args.copy()
-	test_policy_experience_args['memory_capacity'] = 1000
+	test_policy_experience_args['memory_capacity'] = 3000
 		
 	## Agent	
 	agent_args = {}
@@ -126,7 +126,7 @@ def main(main_args):
 	experiment_args['test_objective_coeffs_temporal'] = np.array([0.1,0.1,0.1,1,1,1])
 	experiment_args['test_objective_coeffs_meas'] = np.array([-0.1,-1])
 	experiment_args['test_random_prob'] = 0.
-	experiment_args['test_checkpoint'] = 'checkpoints/2020_01_11_15_40_47'
+	experiment_args['test_checkpoint'] = 'checkpoints/2020_01_11_23_06_26'
 	experiment_args['test_policy_num_steps'] = 2000
 	experiment_args['show_predictions'] = False
 	experiment_args['multiplayer'] = False

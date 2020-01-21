@@ -219,7 +219,7 @@ class CarlaSimulator:
         vel = self.actor.get_velocity()
         acc = self.actor.get_acceleration()
         
-        measurement,_ = self.client.read_data()
+        # measurement,_ = self.client.read_data()
 
         meas = np.zeros(self.num_meas)
         meas[:3] = pos.x, pos.y, pos.z

@@ -40,7 +40,7 @@ def main(main_args):
 	# Train experience
 	train_experience_args = {}
 	train_experience_args['memory_capacity'] = 20000
-	train_experience_args['history_length'] = 1
+	train_experience_args['history_length'] = 3
 	train_experience_args['history_step'] = 1
 	train_experience_args['action_format'] = 'enumerate'
 	train_experience_args['shared'] = False
@@ -69,7 +69,7 @@ def main(main_args):
 		
 	# agent properties
 	agent_args['objective_coeffs_temporal'] = [0., 0. ,0. ,0.5, 0.5, 1.]
-	agent_args['objective_coeffs_meas'] = [-1.,1.]
+	agent_args['objective_coeffs_meas'] = [-1000.,1.]
 
 
 	def f1(x):
@@ -125,7 +125,7 @@ def main(main_args):
 	experiment_args = {}
 	experiment_args['num_train_iterations'] = 820000
 	experiment_args['test_objective_coeffs_temporal'] = np.array([0., 0., 0., 0.5, 0.5, 1.])
-	experiment_args['test_objective_coeffs_meas'] = np.array([-1.,1])
+	experiment_args['test_objective_coeffs_meas'] = np.array([-1000.,1])
 	experiment_args['test_random_prob'] = 0.
 	experiment_args['test_checkpoint'] = 'checkpoints/2020_01_12_19_21_13'
 	experiment_args['test_policy_num_steps'] = 2000
